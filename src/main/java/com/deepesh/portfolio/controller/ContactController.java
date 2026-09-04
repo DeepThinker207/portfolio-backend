@@ -1,0 +1,31 @@
+package com.deepesh.portfolio.controller;
+
+import com.deepesh.portfolio.entity.ContactMessage;
+import com.deepesh.portfolio.repository.ContactMessageRepository;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/contact")
+@CrossOrigin(origins = "*")
+public class ContactController {
+
+    private final ContactMessageRepository contactRepository;
+
+    public ContactController(ContactMessageRepository contactRepository) {
+        this.contactRepository = contactRepository;
+    }
+
+    // POST: to receive new message
+    @PostMapping
+    public ContactMessage sendMessage(@RequestBody ContactMessage contactMessage) {
+        return contactRepository.save(contactMessage);
+    }
+
+    // GET: To see all the messages
+    @GetMapping
+    public List<ContactMessage> getAllMessages() {
+        return contactRepository.findAll();
+    }
+}
