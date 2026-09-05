@@ -3,6 +3,7 @@ package com.deepesh.portfolio.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // Generates a secure random key for JWT signing
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long jwtExpirationMs = 86400000; // 1 Day in milliseconds
+    // Fixed 256-bit secret key
+    private static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    private final Key secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
+    private final long jwtExpirationMs = 86400000;
 
     public String generateToken(String username) {
         return Jwts.builder()

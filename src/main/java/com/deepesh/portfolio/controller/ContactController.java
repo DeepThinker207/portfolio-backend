@@ -2,6 +2,7 @@ package com.deepesh.portfolio.controller;
 
 import com.deepesh.portfolio.entity.ContactMessage;
 import com.deepesh.portfolio.repository.ContactMessageRepository;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,9 +18,8 @@ public class ContactController {
         this.contactRepository = contactRepository;
     }
 
-    // POST: to receive new message
     @PostMapping
-    public ContactMessage sendMessage(@RequestBody ContactMessage contactMessage) {
+    public ContactMessage sendMessage(@Valid @RequestBody ContactMessage contactMessage) {
         return contactRepository.save(contactMessage);
     }
 
@@ -28,4 +28,6 @@ public class ContactController {
     public List<ContactMessage> getAllMessages() {
         return contactRepository.findAll();
     }
+
+
 }

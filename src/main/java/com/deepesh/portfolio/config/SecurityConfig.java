@@ -27,10 +27,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll() // Anyone can view projects
-                        .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()    // Anyone can send a message
-                        .requestMatchers("/api/auth/login").permitAll()                  // Anyone can login
-                        .anyRequest().authenticated()                                    // Everything else requires a valid token
+                        // Public APIs
+                        .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
+
+                        // Everything else requires token
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
