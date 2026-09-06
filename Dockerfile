@@ -1,14 +1,23 @@
-# Base image with Java 25
-FROM amazoncorretto:25
-
-# Set the working directory inside the container
+# Stage 1: Build the application
+FROM amazoncorretto:25 AS builder
 WORKDIR /app
 
-# Copy the built JAR file into the container
-COPY target/portfolio-0.0.1-SNAPSHOT.jar portfolio-app.jar
+# Copy the entire project into the container
+COPY . .
 
-# Expose port 8080
+# Give execution permission to the Maven wrapper and build the project
+RUN chmod +x mvnw
+RUN ./mvnw clean package -DskipTests
+
+# Stage 2: Run the application
+FROM amazoncorretto:25
+WORKDIR /app
+
+# Copy only the built JAR from the builder stage
+COPY --from=builder /app/target/portfolio-0.0.1-SNAPSHOT.jar portfolio-app.jar
+
+# Expose the port
 EXPOSE 8080
 
-# Command to run the application
+# Run the app
 ENTRYPOINT ["java", "-jar", "portfolio-app.jar"]
