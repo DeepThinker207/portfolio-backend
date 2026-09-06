@@ -3,6 +3,7 @@ package com.deepesh.portfolio.controller;
 import com.deepesh.portfolio.entity.Project;
 import com.deepesh.portfolio.service.ProjectService;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
