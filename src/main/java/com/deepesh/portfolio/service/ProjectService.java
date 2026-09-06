@@ -1,7 +1,7 @@
 package com.deepesh.portfolio.service;
 
 import com.deepesh.portfolio.entity.Project;
-import com.deepesh.portfolio.exception.ResourceNotFoundException;
+import com.deepesh.portfolio.exception.ResourceNotFoundException; // Naya import
 import com.deepesh.portfolio.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,17 +21,13 @@ public class ProjectService {
     }
 
     public List<Project> getAllProjects() {
-        return projectRepository.findAll();
-    }
-
-    public Project getProjectById(Long id) {
-        return projectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
+        return projectRepository.findAllByOrderByIdDesc(); // Newest first
     }
 
     public Project updateProject(Long id, Project projectDetails) {
+        // Using specific ResourceNotFoundException instead of generic RuntimeException
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
 
         project.setTitle(projectDetails.getTitle());
         project.setDescription(projectDetails.getDescription());
@@ -43,6 +39,10 @@ public class ProjectService {
     }
 
     public void deleteProject(Long id) {
+        // Check if project exists before attempting to delete to return a proper 404
+        if (!projectRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Project not found with id: " + id);
+        }
         projectRepository.deleteById(id);
     }
 }
