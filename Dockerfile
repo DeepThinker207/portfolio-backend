@@ -2,6 +2,9 @@
 FROM amazoncorretto:25 AS builder
 WORKDIR /app
 
+# Install tar and gzip (Required by Maven to extract downloaded dependencies)
+RUN yum install -y tar gzip
+
 # Copy the entire project into the container
 COPY . .
 
