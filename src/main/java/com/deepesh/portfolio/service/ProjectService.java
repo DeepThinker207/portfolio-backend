@@ -28,4 +28,21 @@ public class ProjectService {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + id));
     }
+
+    public Project updateProject(Long id, Project projectDetails) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        project.setTitle(projectDetails.getTitle());
+        project.setDescription(projectDetails.getDescription());
+        project.setTechStack(projectDetails.getTechStack());
+        project.setGithubUrl(projectDetails.getGithubUrl());
+        project.setLiveUrl(projectDetails.getLiveUrl());
+
+        return projectRepository.save(project);
+    }
+
+    public void deleteProject(Long id) {
+        projectRepository.deleteById(id);
+    }
 }

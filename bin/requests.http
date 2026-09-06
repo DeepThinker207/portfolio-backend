@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "message": "Hi Deepesh, I reviewed your Elite Coders project. We are looking for a Spring Boot developer and would love to schedule an interview."
+}

@@ -2,38 +2,45 @@ package com.deepesh.portfolio.controller;
 
 import com.deepesh.portfolio.dto.AuthRequest;
 import com.deepesh.portfolio.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
-    private final JwtUtil jwtUtil;
+    @Value("${app.admin.username}")
+    private String adminUsername;
 
-    // Hardcoded credentials for single-admin portfolio
-    private final String ADMIN_USER = "deepesh_admin";
-    private final String ADMIN_PASS = "Deepesh@2026";
+    @Value("${app.admin.password}")
+    private String adminPassword;
+
+    private final JwtUtil jwtUtil;
 
     public AuthController(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Authenticates the admin user and returns a JWT token.
+     *
+     * @param authRequest Contains the username and password from the client.
+     * @return ResponseEntity containing the JWT token or an error message.
+     */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequest request) {
-        if (ADMIN_USER.equals(request.getUsername()) && ADMIN_PASS.equals(request.getPassword())) {
-            String token = jwtUtil.generateToken(request.getUsername());
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+        // Validate credentials against securely injected environment properties
+        if (adminUsername.equals(authRequest.getUsername()) &&
+                adminPassword.equals(authRequest.getPassword())) {
 
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            String token = jwtUtil.generateToken(adminUsername);
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
         }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }

@@ -26,17 +26,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // CORS enable kiya taaki React se baat ho sake
+                .cors(Customizer.withDefaults()) // Enable CORS to connect with React
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // SIRF GET requests public hain (Duniya projects dekh sakti hai)
+                        // Only GET requests are public
                         .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/profile").permitAll()
 
-                        // Contact form aur Login public hai
+                        // Contact form and Login is public
                         .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
 
-                        // Baaki sab kuch (jaise POST /api/projects) ke liye Token chahiye hoga!
+                        // Token will be needed for all (POST /api/projects)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
