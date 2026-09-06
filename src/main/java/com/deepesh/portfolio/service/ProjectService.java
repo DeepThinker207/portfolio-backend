@@ -24,6 +24,12 @@ public class ProjectService {
         return projectRepository.findAllByOrderByIdDesc(); // Newest first
     }
 
+    public Project getProjectById(Long id) {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found with id: " + id
+                ));
+    }
     public Project updateProject(Long id, Project projectDetails) {
         // Using specific ResourceNotFoundException instead of generic RuntimeException
         Project project = projectRepository.findById(id)
