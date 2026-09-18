@@ -35,18 +35,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // Enable CORS to connect with React
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Only GET requests are public
+                        // Public GET endpoints
                         .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/profile").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/site").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/site-settings").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/education").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/focus-items").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/build-areas").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/skill-categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/exploration-items").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/opportunity-types").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/social-links").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/navigation-items").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/section-settings").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/seo-settings").permitAll()
 
-                        // Contact form and Login is public
+                        // Public POST endpoints
                         .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+
+                        // Auth endpoint
                         .requestMatchers("/api/auth/login").permitAll()
 
-                        // Token will be needed for all (POST /api/projects)
+                        // All admin endpoints and everything else requires auth
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -67,7 +81,7 @@ public class SecurityConfig {
                 Arrays.stream(allowedOrigins.split(","))
                         .map(String::trim)
                         .toList());
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         configuration.setMaxAge(1800L);
 

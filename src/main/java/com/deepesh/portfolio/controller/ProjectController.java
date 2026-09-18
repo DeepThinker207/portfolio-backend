@@ -1,7 +1,10 @@
 package com.deepesh.portfolio.controller;
 
+import com.deepesh.portfolio.dto.ProjectDto;
 import com.deepesh.portfolio.entity.Project;
+import com.deepesh.portfolio.exception.ResourceNotFoundException;
 import com.deepesh.portfolio.service.ProjectService;
+import com.deepesh.portfolio.service.SiteContentMapper;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -18,23 +21,27 @@ public class ProjectController {
     }
 
     @PostMapping
-    public Project createProject(@Valid @RequestBody Project project) { // Added @Valid
-        return projectService.addProject(project);
+    public ProjectDto createProject(@Valid @RequestBody Project project) {
+        return SiteContentMapper.toProjectDto(projectService.addProject(project), false);
     }
 
     @GetMapping
-    public List<Project> getProjects() {
-        return projectService.getAllProjects();
+    public List<ProjectDto> getPublicProjects() {
+        return SiteContentMapper.toProjectDtos(projectService.getVisibleProjects(), true);
     }
 
     @GetMapping("/{id}")
-    public Project getProjectById(@PathVariable Long id) {
-        return projectService.getProjectById(id);
+    public ProjectDto getProjectById(@PathVariable Long id) {
+        Project project = projectService.getProjectById(id);
+        if (project.getVisible() != null && !project.getVisible()) {
+            throw new ResourceNotFoundException("Project not found with id: " + id);
+        }
+        return SiteContentMapper.toProjectDto(project, true);
     }
 
     @PutMapping("/{id}")
-    public Project updateProject(@PathVariable Long id, @Valid @RequestBody Project project) {  // Added @Valid
-        return projectService.updateProject(id, project);
+    public ProjectDto updateProject(@PathVariable Long id, @Valid @RequestBody Project project) {
+        return SiteContentMapper.toProjectDto(projectService.updateProject(id, project), false);
     }
 
     @DeleteMapping("/{id}")

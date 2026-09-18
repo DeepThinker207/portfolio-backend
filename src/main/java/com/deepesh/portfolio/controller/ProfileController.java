@@ -1,7 +1,9 @@
 package com.deepesh.portfolio.controller;
 
+import com.deepesh.portfolio.dto.ProfileDto;
 import com.deepesh.portfolio.entity.Profile;
 import com.deepesh.portfolio.repository.ProfileRepository;
+import com.deepesh.portfolio.service.SiteContentMapper;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,16 +16,16 @@ public class ProfileController {
         this.profileRepository = profileRepository;
     }
 
-
     @GetMapping
-    public Profile getProfile() {
-        return profileRepository.findById(1L).orElse(new Profile());
+    public ProfileDto getProfile() {
+        return SiteContentMapper.toProfileDto(
+                profileRepository.findById(1L).orElse(null));
     }
 
-    // Only admin can update profile
     @PutMapping
-    public Profile updateProfile(@RequestBody Profile updatedProfile) {
-        updatedProfile.setId(1L); // Forcefully ID 1 set
-        return profileRepository.save(updatedProfile);
+    public ProfileDto updateProfile(@RequestBody Profile updatedProfile) {
+        updatedProfile.setId(1L);
+        return SiteContentMapper.toProfileDto(
+                profileRepository.save(updatedProfile));
     }
 }

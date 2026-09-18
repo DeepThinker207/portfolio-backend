@@ -19,4 +19,9 @@ public class Profile {
     private String githubUrl;
     private String linkedinUrl;
     private String resumeUrl;
+
+    // New CMS fields
+    private String roleTitle;
+    private Boolean availabilityEnabled = true;
+    private String availabilityLabel = "Open to Work";
 }
